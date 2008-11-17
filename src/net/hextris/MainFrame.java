@@ -51,14 +51,14 @@ public class MainFrame extends JFrame {
         JMenu helpMenu = new JMenu(rb.getString("Help"));
         JMenuItem newGameMI = new JMenuItem(rb.getString("New_Game"));
         JMenuItem newDemoMI = new JMenuItem(rb.getString("Demo"));
-        JMenuItem highScoresMI = new JMenuItem(rb.getString("Highscores"));
+        //---JMenuItem highScoresMI = new JMenuItem(rb.getString("Highscores"));
         JMenuItem prefsMI = new JMenuItem(rb.getString("Preferences"));
         JMenuItem exitMI = new JMenuItem(rb.getString("Quit"));
         JMenuItem gameInfo = new JMenuItem(rb.getString("About"));
         JMenuItem gameHelp = new JMenuItem(rb.getString("Help"));
         gameMenu.add(newGameMI);
         gameMenu.add(newDemoMI);
-        gameMenu.add(highScoresMI);
+        //---gameMenu.add(highScoresMI);
         gameMenu.add(prefsMI);
         gameMenu.add(exitMI);
         helpMenu.add(gameInfo);
@@ -79,13 +79,13 @@ public class MainFrame extends JFrame {
                 hextris.newGame(true, true);
             }
         });
-        highScoresMI.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.Event.ALT_MASK, false));
+        /*---highScoresMI.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.Event.ALT_MASK, false));
         highScoresMI.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 hextris.showHighScores();
             }
-        });
+        });*/
         prefsMI.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.ALT_MASK, false));
         prefsMI.addActionListener(new ActionListener() {
 

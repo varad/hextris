@@ -205,7 +205,8 @@ public class Hextris extends JPanel implements Runnable {
                 newGame(true, true);
             }
         });
-        this.buttonHighscore = new JButton(rb.getString("Highscores"));
+        
+        /*--this.buttonHighscore = new JButton(rb.getString("Highscores"));
         this.add(this.buttonHighscore,
                 new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
@@ -217,7 +218,7 @@ public class Hextris extends JPanel implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 showHighScores();
             }
-        });
+        });*/
 
 
         this.setVisible(true);
@@ -424,7 +425,7 @@ public class Hextris extends JPanel implements Runnable {
     public void gameOver() {
         this.moverThread = null;
         this.playPanel.setGameOver(true);
-        if (!gameOver && !this.demo && ScoreList.read()) {
+        /*--if (!gameOver && !this.demo && ScoreList.read()) {
             int place = ScoreList.getPlace(score);
             if (place <= ScoreList.getMaxSize()) {
                 ///TODO:localization
@@ -434,7 +435,7 @@ public class Hextris extends JPanel implements Runnable {
                     this.showHighScores();
                 }
             }
-        }
+        }*/
         this.gameOver = true;
         buttonStart.grabFocus();
     }
@@ -513,7 +514,7 @@ public class Hextris extends JPanel implements Runnable {
      * show the highscores
      *
      */
-    public void showHighScores() {
+    /*public void showHighScores() {
         //prepare jta
         JTextArea jta = new JTextArea();
         jta.setFont(new java.awt.Font("Courier", 0, 12));
@@ -544,7 +545,7 @@ public class Hextris extends JPanel implements Runnable {
                 jsp,
                 rb.getString("Hextris_Highscores"),
                 JOptionPane.PLAIN_MESSAGE);
-    }
+    }*/
 
     /**
      * the dialog when game is started containing level and severity selection
