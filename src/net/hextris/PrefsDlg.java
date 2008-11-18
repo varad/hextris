@@ -1,9 +1,9 @@
 package net.hextris;
 
-import java.awt.Component;
+import java.awt.AWTEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -17,6 +17,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
@@ -47,16 +48,23 @@ public class PrefsDlg extends JDialog {
 
     public PrefsDlg(Frame frame) {
         super(frame, "Hextris Preferences", true);
-        this.initialize();
+        initialize();
     }
 
     private void initialize() {
-        this.getContentPane().add(prefsPanel, null);
-        this.prefsPanel.setLayout(new GridBagLayout());
-        this.prefsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.prefsPanel.setPreferredSize(new Dimension(250, 250));
+        getContentPane().add(prefsPanel, null);
+        addWindowListener(new WindowAdapter() {
 
-        this.prefsPanel.add(new JLabel("Hexagonsize: "),
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeBT_actionPerformed(e);
+            }
+        });
+        prefsPanel.setLayout(new GridBagLayout());
+        prefsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        prefsPanel.setPreferredSize(new Dimension(250, 250));
+
+        prefsPanel.add(new JLabel("Hexagonsize: "),
                 new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
@@ -92,22 +100,22 @@ public class PrefsDlg extends JDialog {
         this.sizeCB.setSelectedIndex(((Integer)ctx.getProperty(Context.HEX_SIZE)).intValue()-1);*/
         int count = 0;
         count++;
-        this.addKeyGrabber(count++, "move left: ", moveLeftBT, moveLeftJTF, Context.KEY_MOVE_LEFT, ctx.getKeys()[0]);
-        this.addKeyGrabber(count++, "move right: ", moveRightBT, moveRightJTF, Context.KEY_MOVE_RIGHT, ctx.getKeys()[1]);
-        this.addKeyGrabber(count++, "rotate left: ", rotateLeftBT, rotateLeftJTF, Context.KEY_ROTATE_LEFT, ctx.getKeys()[2]);
-        this.addKeyGrabber(count++, "rotate right: ", rotateRightBT, rotateRightJTF, Context.KEY_ROTATE_RIGHT, ctx.getKeys()[3]);
-        this.addKeyGrabber(count++, "move down: ", moveDownBT, moveDownJTF, Context.KEY_MOVE_DOWN, ctx.getKeys()[4]);
-        this.addKeyGrabber(count++, "fall down: ", fallDownBT, fallDownJTF, Context.KEY_FALL_DOWN, ctx.getKeys()[5]);
+        addKeyGrabber(count++, "move left: ", moveLeftBT, moveLeftJTF, Context.KEY_MOVE_LEFT, ctx.getKeys()[0]);
+        addKeyGrabber(count++, "move right: ", moveRightBT, moveRightJTF, Context.KEY_MOVE_RIGHT, ctx.getKeys()[1]);
+        addKeyGrabber(count++, "rotate left: ", rotateLeftBT, rotateLeftJTF, Context.KEY_ROTATE_LEFT, ctx.getKeys()[2]);
+        addKeyGrabber(count++, "rotate right: ", rotateRightBT, rotateRightJTF, Context.KEY_ROTATE_RIGHT, ctx.getKeys()[3]);
+        addKeyGrabber(count++, "move down: ", moveDownBT, moveDownJTF, Context.KEY_MOVE_DOWN, ctx.getKeys()[4]);
+        addKeyGrabber(count++, "fall down: ", fallDownBT, fallDownJTF, Context.KEY_FALL_DOWN, ctx.getKeys()[5]);
 
-        this.closeBT.setPreferredSize(new Dimension(120, 26));
-        this.closeBT.setText("Close");
-        this.closeBT.addActionListener(new java.awt.event.ActionListener() {
+        closeBT.setPreferredSize(new Dimension(120, 26));
+        closeBT.setText("Close");
+        closeBT.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 closeBT_actionPerformed(e);
             }
         });
-        this.prefsPanel.add(closeBT,
+        prefsPanel.add(closeBT,
                 new GridBagConstraints(0, 10, 10, 1, 1.0, 1.0,
                 GridBagConstraints.SOUTHEAST,
                 GridBagConstraints.NONE,
@@ -115,11 +123,10 @@ public class PrefsDlg extends JDialog {
                 0, 0));
 
 
-        this.pack();
-
+        pack();
     }
 
-    private void closeBT_actionPerformed(ActionEvent e) {
+    private void closeBT_actionPerformed(AWTEvent e) {
         ctx.savePersistProp();
         this.dispose();
     }
@@ -141,21 +148,21 @@ public class PrefsDlg extends JDialog {
      */
     private void addKeyGrabber(int pos, String label, JButton button, final JTextField jtf, final String prop, int init) {
         final JDialog _this = this;
-        this.prefsPanel.add(new JLabel(label),
+        prefsPanel.add(new JLabel(label),
                 new GridBagConstraints(0, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0),
                 0, 0));
         jtf.setPreferredSize(new Dimension(50, 26));
-        this.prefsPanel.add(jtf,
+        prefsPanel.add(jtf,
                 new GridBagConstraints(1, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0),
                 0, 0));
         jtf.setText(KeyEvent.getKeyText(init));
-        this.prefsPanel.add(button,
+        prefsPanel.add(button,
                 new GridBagConstraints(2, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
@@ -191,18 +198,20 @@ public class PrefsDlg extends JDialog {
 
         public KeyGrabber() {
             super();
-            this.setContentPane(l);
-            this.setModal(true);
-            this.pack();
-            this.addKeyListener(new java.awt.event.KeyAdapter() {
+            setContentPane(l);
+            setModal(true);
+            pack();
+            addKeyListener(new java.awt.event.KeyAdapter() {
 
+                @Override
                 public void keyPressed(java.awt.event.KeyEvent e) {
                     key = e.getKeyCode();
                     endGrab();
                 }
             });
-            this.addFocusListener(new java.awt.event.FocusAdapter() {
+            addFocusListener(new java.awt.event.FocusAdapter() {
 
+                @Override
                 public void focusLost(java.awt.event.FocusEvent e) {
                     endGrab();
                 }
@@ -214,12 +223,12 @@ public class PrefsDlg extends JDialog {
          * @return
          */
         public int grab() {
-            this.setVisible(true);
+            setVisible(true);
             return key;
         }
 
         public void endGrab() {
-            this.dispose();
+            dispose();
         }
     }
 }
