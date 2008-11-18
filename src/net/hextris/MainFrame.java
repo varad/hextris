@@ -142,7 +142,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Bring up the properies dialog.
+     * Bring up the properties dialog.
      */
     private void showGameProperties() {
         PrefsDlg dlg = new PrefsDlg(JOptionPane.getFrameForComponent(this));

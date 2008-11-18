@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -18,61 +17,54 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 /**
  * Shows a dialog with programm properties that can be changed
  * @author frank
+ * @author Radek Varbuchta
  */
 public class PrefsDlg extends JDialog {
 
     Context ctx = Context.getContext();
     JPanel prefsPanel = new JPanel();
-    JButton closeBT = new JButton();
-    //JComboBox sizeCB = new JComboBox();
     JRadioButton btnNormalSize;
     JRadioButton btnBigSize;
-    JButton moveLeftBT = new JButton("grab");
-    JButton moveRightBT = new JButton("grab");
-    JButton moveDownBT = new JButton("grab");
-    JButton fallDownBT = new JButton("grab");
-    JButton rotateLeftBT = new JButton("grab");
-    JButton rotateRightBT = new JButton("grab");
-    JTextField moveLeftJTF = new JTextField();
-    JTextField moveRightJTF = new JTextField();
-    JTextField moveDownJTF = new JTextField();
-    JTextField fallDownJTF = new JTextField();
-    JTextField rotateLeftJTF = new JTextField();
-    JTextField rotateRightJTF = new JTextField();
+    private static ResourceBundle rb = java.util.ResourceBundle.getBundle("net/hextris/language");
 
     public PrefsDlg(Frame frame) {
-        super(frame, "Hextris Preferences", true);
+        super(frame, rb.getString("Hextris preferences"), true);
         initialize();
     }
 
+    /**
+     * Initializes gui widgest.
+     */
     private void initialize() {
+        // preferences panel
         getContentPane().add(prefsPanel, null);
         addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                closeBT_actionPerformed(e);
+                closeActionPerformed(e);
             }
         });
         prefsPanel.setLayout(new GridBagLayout());
         prefsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        prefsPanel.setPreferredSize(new Dimension(250, 250));
 
-        prefsPanel.add(new JLabel("Hexagonsize: "),
+        // hexagons size
+        prefsPanel.add(new JLabel(rb.getString("Hexagons size:")),
                 new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0),
                 0, 0));
 
-        btnNormalSize = new JRadioButton("Normal", ctx.getHexSize() == Context.HexSize.NORMAL);
-        btnBigSize = new JRadioButton("Big", ctx.getHexSize() == Context.HexSize.BIG);
+        btnNormalSize = new JRadioButton(rb.getString("Normal"), ctx.getHexSize() == Context.HexSize.NORMAL);
+        btnBigSize = new JRadioButton(rb.getString("Big"), ctx.getHexSize() == Context.HexSize.BIG);
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(btnNormalSize);
         btnGroup.add(btnBigSize);
@@ -81,73 +73,74 @@ public class PrefsDlg extends JDialog {
         btnNormalSize.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sizeCB_actionPerformed(e);
+                hexSizeActionPerformed(e);
             }
         });
         btnBigSize.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sizeCB_actionPerformed(e);
+                hexSizeActionPerformed(e);
             }
         });
 
-        /*for (int i = 2; i<10; i++) this.sizeCB.addItem(new Integer(i));
-        this.sizeCB.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-        sizeCB_actionPerformed(e);
-        }
-        });
-        this.sizeCB.setSelectedIndex(((Integer)ctx.getProperty(Context.HEX_SIZE)).intValue()-1);*/
-        int count = 0;
-        count++;
-        addKeyGrabber(count++, "move left: ", moveLeftBT, moveLeftJTF, Context.KEY_MOVE_LEFT, ctx.getKeys()[0]);
-        addKeyGrabber(count++, "move right: ", moveRightBT, moveRightJTF, Context.KEY_MOVE_RIGHT, ctx.getKeys()[1]);
-        addKeyGrabber(count++, "rotate left: ", rotateLeftBT, rotateLeftJTF, Context.KEY_ROTATE_LEFT, ctx.getKeys()[2]);
-        addKeyGrabber(count++, "rotate right: ", rotateRightBT, rotateRightJTF, Context.KEY_ROTATE_RIGHT, ctx.getKeys()[3]);
-        addKeyGrabber(count++, "move down: ", moveDownBT, moveDownJTF, Context.KEY_MOVE_DOWN, ctx.getKeys()[4]);
-        addKeyGrabber(count++, "fall down: ", fallDownBT, fallDownJTF, Context.KEY_FALL_DOWN, ctx.getKeys()[5]);
+        // keys
+        int position = 2;
+        addKeyGrabber(position++, rb.getString("Move left:"),  Context.KEY_MOVE_LEFT, ctx.getKeys()[0]);
+        addKeyGrabber(position++, rb.getString("Move right:"),  Context.KEY_MOVE_RIGHT, ctx.getKeys()[1]);
+        addKeyGrabber(position++, rb.getString("Rotate left:"), Context.KEY_ROTATE_LEFT, ctx.getKeys()[2]);
+        addKeyGrabber(position++, rb.getString("Rotate right:"), Context.KEY_ROTATE_RIGHT, ctx.getKeys()[3]);
+        addKeyGrabber(position++, rb.getString("Move down:"), Context.KEY_MOVE_DOWN, ctx.getKeys()[4]);
+        addKeyGrabber(position++, rb.getString("Fall down:"),  Context.KEY_FALL_DOWN, ctx.getKeys()[5]);
 
-        closeBT.setPreferredSize(new Dimension(120, 26));
-        closeBT.setText("Close");
-        closeBT.addActionListener(new java.awt.event.ActionListener() {
+        // buttons
+        JButton btnClose = new JButton(rb.getString("Close"));
+        btnClose.setPreferredSize(new Dimension(120, 26));
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                closeBT_actionPerformed(e);
+                closeActionPerformed(e);
             }
         });
-        prefsPanel.add(closeBT,
+        prefsPanel.add(btnClose,
                 new GridBagConstraints(0, 10, 10, 1, 1.0, 1.0,
-                GridBagConstraints.SOUTHEAST,
+                GridBagConstraints.SOUTH,
                 GridBagConstraints.NONE,
                 new Insets(5, 5, 0, 0),
                 0, 0));
 
-
         pack();
     }
 
-    private void closeBT_actionPerformed(AWTEvent e) {
+    /**
+     * Saves settings.
+     * @param source event
+     */
+    private void closeActionPerformed(AWTEvent e) {
         ctx.savePersistProp();
-        this.dispose();
+        dispose();
     }
 
-    private void sizeCB_actionPerformed(ActionEvent e) {
+    /**
+     * Sets new hexagons size.
+     * @param source event
+     */
+    private void hexSizeActionPerformed(ActionEvent e) {
         Context.HexSize size = btnNormalSize.isSelected() ? Context.HexSize.NORMAL : Context.HexSize.BIG;
         ctx.put(Context.HEX_SIZE, size.toString());
         GamePanel.setHexSize(size);
     }
 
     /**
-     * adds widgets for configuring a key to the mainPanel
-     * @param pos
+     * Adds widgets for configuring a key to the main panel.
+     * @param position
      * @param label
-     * @param button
-     * @param jtf
-     * @param prop
-     * @param init
+     * @param key name
+     * @param value
      */
-    private void addKeyGrabber(int pos, String label, JButton button, final JTextField jtf, final String prop, int init) {
+    private void addKeyGrabber(int pos, String label, final String keyName, int val) {
         final JDialog _this = this;
+        final JTextField jtf = new JTextField();
+        JButton button = new JButton(rb.getString("Grab"));
         prefsPanel.add(new JLabel(label),
                 new GridBagConstraints(0, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
@@ -161,13 +154,14 @@ public class PrefsDlg extends JDialog {
                 GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0),
                 0, 0));
-        jtf.setText(KeyEvent.getKeyText(init));
+        jtf.setText(KeyEvent.getKeyText(val));
         prefsPanel.add(button,
                 new GridBagConstraints(2, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
                 GridBagConstraints.HORIZONTAL,
-                new Insets(0, 0, 0, 0),
+                new Insets(0, 5, 0, 0),
                 0, 0));
+
         //invoke the key-grabber
         button.addActionListener(new java.awt.event.ActionListener() {
 
@@ -177,7 +171,7 @@ public class PrefsDlg extends JDialog {
                 int keyId = kg.grab();
                 if (keyId >= 0) {
                     jtf.setText(KeyEvent.getKeyText(keyId));
-                    ctx.put(prop, new Integer(keyId));
+                    ctx.put(keyName, new Integer(keyId));
                     Context.readKeys();
                 }
             }
@@ -186,19 +180,17 @@ public class PrefsDlg extends JDialog {
     }
 
     /**
-     * a small modal dialog to grab keys
-     * disposes on key-press or lose-focus events
+     * A small modal dialog to grab keys.
+     * Disposes on key-press or lose-focus events.
      * @author felfe
-     *
      */
     class KeyGrabber extends javax.swing.JDialog {
-
-        JLabel l = new JLabel("press key");
+        JLabel lbl = new JLabel(rb.getString("Press key"));
         int key = -1;
 
-        public KeyGrabber() {
+        private KeyGrabber() {
             super();
-            setContentPane(l);
+            setContentPane(lbl);
             setModal(true);
             pack();
             addKeyListener(new java.awt.event.KeyAdapter() {
@@ -219,7 +211,7 @@ public class PrefsDlg extends JDialog {
         }
 
         /**
-         * displays the dialog and returns the grabbed key
+         * Displays the dialog and returns the grabbed key.
          * @return
          */
         public int grab() {
@@ -227,6 +219,9 @@ public class PrefsDlg extends JDialog {
             return key;
         }
 
+        /**
+         * 
+         */
         public void endGrab() {
             dispose();
         }
