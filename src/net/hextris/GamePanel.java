@@ -95,9 +95,9 @@ public class GamePanel extends JPanel {
         board = new Board(width, height);
 
         // get properties
-        Integer hs = ((Integer) ctx.getProperty(Context.HEX_SIZE));
-        if (hs != null) {
-            rh = hs.intValue();
+        Integer hexSize = hexSizeToInt(ctx.getHexSize());
+        if (hexSize != null) {
+            rh = hexSize;
         }
 
         this.initComponents();
@@ -182,7 +182,9 @@ public class GamePanel extends JPanel {
                         g.drawLine(xs[2], ys[2], xs[3], ys[3]);
                         g.drawLine(xs[4], ys[4], xs[3], ys[3]);*/
 
-                        Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/net/hextris/brick.gif"));
+                        String imgName = ctx.getHexSize() == Context.HexSize.NORMAL
+                                ? "brick.gif" : "brick_big.gif";
+                        Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/net/hextris/images/" + imgName));
                         g.drawImage(img, xs[4], ys[4], this);
                     }
                 }
@@ -221,7 +223,8 @@ public class GamePanel extends JPanel {
      * sets size of hexagons and repaints all panels
      * @param size
      */
-    public static void setHexSize(int size) {
+    public static void setHexSize(Context.HexSize hexSize) {
+        int size = hexSizeToInt(hexSize);
         if (rh != size) {
             rh = size;
             for (GamePanel panel : panels) {
@@ -232,14 +235,16 @@ public class GamePanel extends JPanel {
                 }
                 ((JFrame) c).pack();
             }
-            ctx.put(Context.HEX_SIZE, new Integer(size));
         }
     }
 
-    public static int getHexSize() {
-        return rh;
+    private static int hexSizeToInt(Context.HexSize size) {
+        return size == Context.HexSize.BIG ? 7 : 4;
     }
 
+    /*---public static int getHexSize() {
+    return rh;
+    }*/
     /**
      * sets the background color and repaints
      */

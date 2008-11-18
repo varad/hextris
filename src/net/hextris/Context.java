@@ -18,6 +18,10 @@ import java.awt.event.KeyEvent;
  */
 public class Context extends Hashtable<Object, Object> {
 
+    public enum HexSize {
+
+        NORMAL, BIG
+    }
     static final long serialVersionUID = 493518487136L;
     static final String cfgFileString = "hextris.cfg";
     static final String KEY_MOVE_LEFT = "key.move.left";
@@ -29,7 +33,8 @@ public class Context extends Hashtable<Object, Object> {
     static final String HEX_SIZE = "hex.size";
     static Context ctx = null;
     static String path = null;
-    private static final int[] keys = new int[]{KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_I, KeyEvent.VK_O, KeyEvent.VK_K, KeyEvent.VK_M};
+    private static final int[] keys = new int[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_R, KeyEvent.VK_SPACE, KeyEvent.VK_DOWN};
+    private static final HexSize DEFAULT_HEX_SIZE = HexSize.NORMAL;
 
     /**
      * returns the context for this application
@@ -124,23 +129,23 @@ public class Context extends Hashtable<Object, Object> {
      * @param property
      * @param value
      */
-    public void setProperty(String property, Object value) {
-        put(property, value);
+    /*public void setProperty(String property, Object value) {
+    put(property, value);
 
-        if (property.equals(HEX_SIZE)) {
-            GamePanel.setHexSize(((Integer) value).intValue());
-        }
-
-        if (property.equals(KEY_MOVE_LEFT) ||
-                property.equals(KEY_MOVE_RIGHT) ||
-                property.equals(KEY_MOVE_DOWN) ||
-                property.equals(KEY_ROTATE_LEFT) ||
-                property.equals(KEY_ROTATE_RIGHT) ||
-                property.equals(KEY_FALL_DOWN)) {
-            readKeys();
-        }
+    if (property.equals(HEX_SIZE)) {
+    //GamePanel.setHexSize(((Integer) value).intValue());
+    //GamePanel.setHexSize((HexSize)value);
     }
 
+    if (property.equals(KEY_MOVE_LEFT) ||
+    property.equals(KEY_MOVE_RIGHT) ||
+    property.equals(KEY_MOVE_DOWN) ||
+    property.equals(KEY_ROTATE_LEFT) ||
+    property.equals(KEY_ROTATE_RIGHT) ||
+    property.equals(KEY_FALL_DOWN)) {
+    readKeys();
+    }
+    }*/
     /**
      * get property from hashtable
      * if property does not exist then a default value for known properties is returned
@@ -157,10 +162,21 @@ public class Context extends Hashtable<Object, Object> {
             return o;
         } else {
             if (property.equals(HEX_SIZE)) {
-                return new Integer(6);
+                return new Integer(4);
             }
         }
 
         return null;
+    }
+
+    public HexSize getHexSize() {
+        Object val = get(HEX_SIZE);
+        if (val != null) {
+            HexSize size = HexSize.valueOf(val.toString());
+            if (size != null) {
+                return size;
+            }
+        }
+        return DEFAULT_HEX_SIZE;
     }
 }
