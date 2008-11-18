@@ -19,14 +19,13 @@ import java.util.ResourceBundle;
 public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = -2432811889021456787L;
+    private static ResourceBundle rb = java.util.ResourceBundle.getBundle("net/hextris/language");
     private Hextris hextris = null;
     private Context ctx = Context.getContext();
-    private ResourceBundle rb;
 
     public MainFrame(Hextris h) {
-        super("Hextris " + Hextris.getVersion());
+        super(rb.getString("appName"));
         this.hextris = h;
-        rb = java.util.ResourceBundle.getBundle("net/hextris/language");
         initialize();
     }
 
@@ -82,9 +81,9 @@ public class MainFrame extends JFrame {
         /*---highScoresMI.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.Event.ALT_MASK, false));
         highScoresMI.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                hextris.showHighScores();
-            }
+        public void actionPerformed(ActionEvent e) {
+        hextris.showHighScores();
+        }
         });*/
         prefsMI.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.ALT_MASK, false));
         prefsMI.addActionListener(new ActionListener() {

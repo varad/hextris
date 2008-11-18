@@ -26,7 +26,8 @@ import javax.swing.*;
 public class Hextris extends JPanel implements Runnable {
 
     private static final long serialVersionUID = -3267887732569843668L;
-    private static final String version = "0.9.7";
+    private static ResourceBundle rb = java.util.ResourceBundle.getBundle("net/hextris/language");
+    private static final String version = rb.getString("version");
     private static final int NONE = 0;
     private static final int MOVE_DOWN = 1;
     private static final int FALL_DOWN = 2;
@@ -54,11 +55,9 @@ public class Hextris extends JPanel implements Runnable {
     private int severity;
     private boolean gameOver;
     private boolean demo = false;
-    private ResourceBundle rb;
 
     public Hextris() {
         super();
-        rb = java.util.ResourceBundle.getBundle("net/hextris/language");
         initialize();
     }
 
