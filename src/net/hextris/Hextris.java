@@ -8,8 +8,9 @@ import java.awt.Insets;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import javax.swing.*;
 
@@ -176,7 +177,6 @@ public class Hextris extends JPanel implements Runnable {
         linesLabel.setFont(font);
         linesLabel.setForeground(Color.WHITE);
 
-
         //buttons
         this.buttonStart = new JButton(rb.getString("Start"));
         this.add(this.buttonStart,
@@ -204,20 +204,21 @@ public class Hextris extends JPanel implements Runnable {
                 newGame(true, true);
             }
         });
-        
-        /*--this.buttonHighscore = new JButton(rb.getString("Highscores"));
+
+        this.buttonHighscore = new JButton(rb.getString("Highscores"));
         this.add(this.buttonHighscore,
                 new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(5, 0, 10, 10),
                 0, 0));
+        final Hextris _this = this;
         this.buttonHighscore.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                showHighScores();
+                showHighScore();
             }
-        });*/
+        });
 
 
         this.setVisible(true);
@@ -424,19 +425,42 @@ public class Hextris extends JPanel implements Runnable {
     public void gameOver() {
         this.moverThread = null;
         this.playPanel.setGameOver(true);
-        /*--if (!gameOver && !this.demo && ScoreList.read()) {
-            int place = ScoreList.getPlace(score);
-            if (place <= ScoreList.getMaxSize()) {
-                ///TODO:localization
-                String playerName = JOptionPane.showInputDialog("You are #" + place + " in the highscore list.\nPlease enter your name:", "");
-                if (playerName != null && playerName.trim().length() > 0) {
-                    ScoreList.upload(new Score(playerName.trim().substring(0, Math.min(20, playerName.trim().length())), score));
-                    this.showHighScores();
-                }
-            }
-        }*/
         this.gameOver = true;
         buttonStart.grabFocus();
+
+        HighScore highScore = initHighScore();
+        if (highScore.isHighScore(lines)) {
+            String name = JOptionPane.showInputDialog(this, rb.getString("Type in your name:"), rb.getString("High score"), JOptionPane.INFORMATION_MESSAGE);
+            if (name != null && !name.equals("")) {
+                highScore.addScore(name, lines);
+            }
+            highScore.setVisible(true);
+        }
+    }
+
+    /**
+     * Instantiates HighScore.
+     */
+    private HighScore initHighScore() {
+        HighScore highScore = new HighScore();
+        highScore.setLocationRelativeTo(this);
+        return highScore;
+    }
+
+    /**
+     * Shows high score panel.
+     */
+    private void showHighScore() {
+        HighScore hs = initHighScore();
+        hs.setVisible(true);
+        final Hextris _this = this;
+        hs.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+                _this.grabFocus();
+            }
+        });
     }
 
     /**
@@ -508,43 +532,6 @@ public class Hextris extends JPanel implements Runnable {
     public static String getVersion() {
         return version;
     }
-
-    /**
-     * show the highscores
-     *
-     */
-    /*public void showHighScores() {
-        //prepare jta
-        JTextArea jta = new JTextArea();
-        jta.setFont(new java.awt.Font("Courier", 0, 12));
-        jta.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLoweredBevelBorder(),
-                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-        jta.setEditable(false);
-        JScrollPane jsp = new JScrollPane();
-        jsp.setPreferredSize(new java.awt.Dimension(200, 300));
-        jsp.getViewport().add(jta);
-
-        //read highscores from server and write into jta
-        if (ScoreList.read()) {
-            ArrayList<Score> scoreList = ScoreList.getScoreList();
-            for (int i = 0; i < scoreList.size(); i++) {
-                String pos = new Integer(i + 1).toString();
-                jta.append(pos + "." + "   ".substring(pos.length()) + scoreList.get(i).toString() + "\n");
-            }
-        } else {
-            jta.setText("Could not read highscore list.\n" +
-                    "Most certainly you are not\n" +
-                    "connected to the internet\n" +
-                    "or the server is down.");
-        }
-        jta.setCaretPosition(0);
-
-        JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this),
-                jsp,
-                rb.getString("Hextris_Highscores"),
-                JOptionPane.PLAIN_MESSAGE);
-    }*/
 
     /**
      * the dialog when game is started containing level and severity selection
