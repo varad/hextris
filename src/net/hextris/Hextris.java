@@ -36,7 +36,6 @@ public class Hextris extends JPanel implements Runnable {
     private Context ctx = Context.getContext();
     private GamePanel playPanel = null;
     private GamePanel previewPanel = null;
-    private JLabel scoreLabel = new JLabel("");
     private JLabel levelLabel = new JLabel("");
     private JLabel stonesLabel = new JLabel("");
     private JLabel linesLabel = new JLabel("");
@@ -51,7 +50,6 @@ public class Hextris extends JPanel implements Runnable {
     private Stone nextStone;
     private int lines;
     private int stones;
-    private int score;
     private int level;
     private int severity;
     private boolean gameOver;
@@ -83,7 +81,6 @@ public class Hextris extends JPanel implements Runnable {
                     this.fallDown();
                     break;
                 case MOVE_DOWN:
-                    this.addScore((severity + 1) * getLevel());
                 case NONE:
                     moveDown();
                     break;
@@ -157,19 +154,10 @@ public class Hextris extends JPanel implements Runnable {
                 new Insets(5, 0, 0, 10),
                 0, 0));
 
-        this.add(scoreLabel,
-                new GridBagConstraints(1, 5, 1, 1, 0.0, 1.0,
-                GridBagConstraints.NORTHWEST,
-                GridBagConstraints.NONE,
-                new Insets(5, 0, 0, 10),
-                0, 0));
-
         //labels appearance
         Font font = new Font(this.getFont().getName(), this.getFont().getStyle() | Font.BOLD, 12);
         nextLabel.setFont(font);
         nextLabel.setForeground(Color.WHITE);
-        scoreLabel.setFont(font);
-        scoreLabel.setForeground(Color.WHITE);
         levelLabel.setFont(font);
         levelLabel.setForeground(Color.WHITE);
         stonesLabel.setFont(font);
@@ -180,10 +168,10 @@ public class Hextris extends JPanel implements Runnable {
         //buttons
         this.buttonStart = new JButton(rb.getString("Start"));
         this.add(this.buttonStart,
-                new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST,
+                new GridBagConstraints(1, 6, 1, 1, 0.0, 1.0,
+                GridBagConstraints.SOUTHWEST,
                 GridBagConstraints.HORIZONTAL,
-                new Insets(5, 0, 0, 10),
+                new Insets(10, 0, 0, 10),
                 0, 0));
         this.buttonStart.addActionListener(new ActionListener() {
 
@@ -196,7 +184,7 @@ public class Hextris extends JPanel implements Runnable {
                 new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
-                new Insets(5, 0, 0, 10),
+                new Insets(10, 0, 0, 10),
                 0, 0));
         this.buttonDemo.addActionListener(new ActionListener() {
 
@@ -210,7 +198,7 @@ public class Hextris extends JPanel implements Runnable {
                 new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
-                new Insets(5, 0, 10, 10),
+                new Insets(10, 0, 10, 10),
                 0, 0));
         final Hextris _this = this;
         this.buttonHighscore.addActionListener(new ActionListener() {
@@ -324,7 +312,6 @@ public class Hextris extends JPanel implements Runnable {
         this.demo = demo;
         setStones(0);
         setLines(0);
-        setScore(0);
         if (nextStone != null) {
             nextStone.place(false);
         }
@@ -412,7 +399,6 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void fallDown() {
         while (this.moveDown() && !gameOver) {
-            this.addScore((severity + 1) * 2 * getLevel());
         }
     }
 
@@ -486,24 +472,9 @@ public class Hextris extends JPanel implements Runnable {
     }
 
     /**
-     * increases the score varianle and label
-     * @param s
-     */
-    private void addScore(int s) {
-        setScore(score + s);
-    }
-
-    private void setScore(int s) {
-        score = s;
-        scoreLabel.setText(rb.getString("Score:") + " " + score);
-    }
-
-    /**
-     * increases the stones variable and sets the according score
-     *
+     * Increases the stones variable.
      */
     private void incStones() {
-        addScore((severity + 1) * 10 * getLevel());
         setStones(++stones);
         if (stones > 20 * level && level < 10) {
             setLevel(getLevel() + 1);
@@ -516,16 +487,15 @@ public class Hextris extends JPanel implements Runnable {
     }
 
     /**
-     * increases the lines variable and sets the according score
+     * Increases the lines variable.
      * @param l
      */
     private void addLines(int l) {
-        addScore((severity + 1) * 100 * level * l * l);
         setLines(lines += l);
     }
 
-    private void setLines(int l) {
-        lines = l;
+    private void setLines(int lines) {
+        this.lines = lines;
         linesLabel.setText(rb.getString("Lines:") + " " + this.lines);
     }
 
