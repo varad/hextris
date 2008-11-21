@@ -177,17 +177,17 @@ public class MainFrame extends JFrame {
                 "Please visit the hextris homepage at\n" +
                 "http://hextris.inner-space.de/\n\n" +
                 "Keys:\n" +
-                "move left - " + KeyEvent.getKeyText(ctx.getKeys()[0]) + " or Left\n" +
-                "move right - " + KeyEvent.getKeyText(ctx.getKeys()[1]) + " or Right\n" +
-                "rotate clockwise - " + KeyEvent.getKeyText(ctx.getKeys()[3]) + " or Up\n" +
-                "rotate counterclockwise - " + KeyEvent.getKeyText(ctx.getKeys()[2]) + "\n" +
-                "move down - " + KeyEvent.getKeyText(ctx.getKeys()[4]) + " or Down\n" +
-                "fall down - " + KeyEvent.getKeyText(ctx.getKeys()[5]) + " or Space\n\n" +
-                "Score:\n" +
-                "move down - level x severity\n" +
-                "fall down - level x severity x 2 x lines\n" +
-                "stone - 10 x level x severity\n" +
-                "line removed - 100 x level x severity x lines");
+                "move left - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.MOVE_LEFT)) + " or Left\n" +
+                "move right - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.MOVE_RIGHT)) + " or Right\n" +
+                "rotate clockwise - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.ROTATE_RIGHT)) + " or Up\n" +
+                "rotate counterclockwise - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.ROTATE_LEFT)) + "\n" +
+                "move down - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.MOVE_DOWN)) + " or Down\n" +
+                "fall down - " + KeyEvent.getKeyText(ctx.getKeyValue(Context.Key.FALL_DOWN)) + " or Space\n\n" //"Score:\n" +
+                //"move down - level x severity\n" +
+                //"fall down - level x severity x 2 x lines\n" +
+                //"stone - 10 x level x severity\n" +
+                //"line removed - 100 x level x severity x lines"
+                );
         jta.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLoweredBevelBorder(),
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));

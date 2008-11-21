@@ -3,133 +3,147 @@ package net.hextris;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.awt.event.KeyEvent;
+import java.util.Map.Entry;
 
 /**
- * an application context
- * handler for all kinda things 
- * at the moment only programm properties are kept/loaded/saved
+ * An application context where program properties are kept/loaded/saved.
  * @author frank
- *
+ * @author Radek Varbuchta
  */
-public class Context extends Hashtable<Object, Object> {
+public class Context extends Hashtable<Context.IProperty, Object> {
 
     public enum HexSize {
 
         NORMAL, BIG
     }
-    
+
+    public interface IProperty {
+    }
+
+    public enum Property implements IProperty {
+
+        HEX_SIZE, LAST_NAME
+    }
+
+    public enum Key implements IProperty {
+
+        MOVE_LEFT(KeyEvent.VK_LEFT),
+        MOVE_RIGHT(KeyEvent.VK_RIGHT),
+        MOVE_DOWN(KeyEvent.VK_SPACE),
+        FALL_DOWN(KeyEvent.VK_DOWN),
+        ROTATE_LEFT(KeyEvent.VK_UP),
+        ROTATE_RIGHT(KeyEvent.VK_R);
+        private int intValue;
+
+        Key(int intValue) {
+            this.intValue = intValue;
+        }
+
+        private int intValue() {
+            return intValue;
+        }
+    }
     static final long serialVersionUID = 493518487136L;
-    static final String cfgFileString = "hextris.cfg";
-    static final String KEY_MOVE_LEFT = "key.move.left";
-    static final String KEY_MOVE_RIGHT = "key.move.right";
-    static final String KEY_MOVE_DOWN = "key.move.down";
-    static final String KEY_FALL_DOWN = "key.fall.down";
-    static final String KEY_ROTATE_LEFT = "key.rotate.left";
-    static final String KEY_ROTATE_RIGHT = "key.rotate.right";
-    static final String HEX_SIZE = "hex.size";
-    static final String LAST_NAME = "last.name";
     static Context ctx = null;
-    static String path = null;
-    private static final int[] keys = new int[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_R, KeyEvent.VK_SPACE, KeyEvent.VK_DOWN};
+    private static final String DIR_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
+    private static final String CFG_FILE_NAME = "hextris.cfg";
     private static final HexSize DEFAULT_HEX_SIZE = HexSize.NORMAL;
+    private static final String DEFAULT_LAST_NAME = "";
 
     /**
-     * returns the context for this application
-     * if neccessary a new context is created and initialized
+     * Creates a new config file with default values.
+     * @throws java.io.IOException
+     */
+    public Context() throws IOException {
+        File file = Context.getConfigFile();
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        for (Key key : Key.values()) {
+            super.put(key, key.intValue());
+        }
+        for (Property p : Property.values()) {
+            switch (p) {
+                case HEX_SIZE:
+                    super.put(Property.HEX_SIZE, DEFAULT_HEX_SIZE);
+                    break;
+                case LAST_NAME:
+                    super.put(Property.LAST_NAME, DEFAULT_LAST_NAME);
+                    break;
+            }
+        }
+
+        save();
+    }
+
+    /**
+     * Returns file that represents config file. If a directory in which
+     * the file resides doesn't exist, it's created.
      * @return
+     */
+    private static File getConfigFile() {
+        File dir = new File(DIR_PATH);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        return new File(DIR_PATH + System.getProperty("file.separator") + CFG_FILE_NAME);
+    }
+
+    /**
+     * Returns the context for this application.
+     * If neccessary a new context is created and initialized.
+     * @return context
      */
     public static Context getContext() {
         if (ctx == null) {
             try {
-                Properties prop = System.getProperties();
-                path = prop.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
-                File f = new File(path);
-                if (!f.exists()) {
-                    f.mkdirs();
-                }
-
-                FileInputStream istream = new FileInputStream(path +
-                        System.getProperty("file.separator") + cfgFileString);
+                FileInputStream istream = new FileInputStream(getConfigFile());
                 ObjectInputStream p = new ObjectInputStream(istream);
                 Object o = p.readObject();
                 istream.close();
                 ctx = (Context) o;
-                //initialize keys
-                readKeys();
             } catch (Exception ex) {
                 System.out.println("could not load context create new one");
-                ctx = new Context();
+                try {
+                    ctx = new Context();
+                } catch (IOException ex1) {
+                    System.out.println("cannot creat config file");
+                }
             }
         }
-        //System.out.println(ctx);
+
         return ctx;
     }
 
     /**
-     * read key occupation from hashtable into keys[]-buffer
-     *
+     * Saves properties to the disk.
      */
-    public static void readKeys() {
-        if (ctx == null) {
-            return;
-        }
-
-        Object conf = ctx.get(KEY_MOVE_LEFT);
-        if (conf != null) {
-            keys[0] = ((Integer) conf).intValue();
-        }
-        conf = ctx.get(KEY_MOVE_RIGHT);
-        if (conf != null) {
-            keys[1] = ((Integer) conf).intValue();
-        }
-        conf = ctx.get(KEY_ROTATE_LEFT);
-        if (conf != null) {
-            keys[2] = ((Integer) conf).intValue();
-        }
-        conf = ctx.get(KEY_ROTATE_RIGHT);
-        if (conf != null) {
-            keys[3] = ((Integer) conf).intValue();
-        }
-        conf = ctx.get(KEY_MOVE_DOWN);
-        if (conf != null) {
-            keys[4] = ((Integer) conf).intValue();
-        }
-        conf = ctx.get(KEY_FALL_DOWN);
-        if (conf != null) {
-            keys[5] = ((Integer) conf).intValue();
-        }
-    }
-
-    public int[] getKeys() {
-        return keys;
-    }
-
-    /**
-     * save property-hashtble to disk
-     *
-     */
-    public void savePersistProp() {
+    private void save() {
         try {
-            FileOutputStream ostream = new FileOutputStream(path +
-                    System.getProperty("file.separator") + cfgFileString);
+            FileOutputStream ostream = new FileOutputStream(getConfigFile());
             ObjectOutputStream p = new ObjectOutputStream(ostream);
-            p.writeObject(ctx);
+            p.writeObject(this);
             p.flush();
             ostream.close();
         } catch (Exception ex) {
             System.out.println("could not save config");
         }
+
     }
 
-
-
+    /**
+     * Returs hexagons size.
+     * @return hexagons size
+     */
     public HexSize getHexSize() {
-        Object val = get(HEX_SIZE);
+        Object val = get(Property.HEX_SIZE);
         if (val != null) {
             HexSize size = HexSize.valueOf(val.toString());
             if (size != null) {
@@ -139,18 +153,35 @@ public class Context extends Hashtable<Object, Object> {
         return DEFAULT_HEX_SIZE;
     }
 
+    /**
+     * Returns the last name which got to the high score list.
+     * @return
+     */
     public String getLastName() {
-        Object val = get(LAST_NAME);
+        Object val = get(Property.LAST_NAME);
         if (val == null) {
             return "";
         }
-        return (String)val;
+        return (String) val;
     }
 
-    public void setProperty(String property, Object value) {
-        put(property, value);
-        savePersistProp();
+    /**
+     * Returns integer representation of the given key.
+     * @param key
+     * @return integer representaion of the given key
+     */
+    public int getKeyValue(Key key) {
+        return Integer.valueOf(get(key).toString());
     }
 
-    //TODO:refaktor this class, add enum
+    /**
+     * Puts key-value property into the context and permanently saves changes.
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized Object put(IProperty property, Object value) {
+        Object retVal = super.put(property, value);
+        save();
+        return retVal;
+    }
 }

@@ -85,12 +85,12 @@ public class PrefsDlg extends JDialog {
 
         // keys
         int position = 2;
-        addKeyGrabber(position++, rb.getString("Move left:"),  Context.KEY_MOVE_LEFT, ctx.getKeys()[0]);
-        addKeyGrabber(position++, rb.getString("Move right:"),  Context.KEY_MOVE_RIGHT, ctx.getKeys()[1]);
-        addKeyGrabber(position++, rb.getString("Rotate left:"), Context.KEY_ROTATE_LEFT, ctx.getKeys()[2]);
-        addKeyGrabber(position++, rb.getString("Rotate right:"), Context.KEY_ROTATE_RIGHT, ctx.getKeys()[3]);
-        addKeyGrabber(position++, rb.getString("Move down:"), Context.KEY_MOVE_DOWN, ctx.getKeys()[4]);
-        addKeyGrabber(position++, rb.getString("Fall down:"),  Context.KEY_FALL_DOWN, ctx.getKeys()[5]);
+        addKeyGrabber(position++, rb.getString("Move left:"),  Context.Key.MOVE_LEFT);
+        addKeyGrabber(position++, rb.getString("Move right:"),  Context.Key.MOVE_RIGHT);
+        addKeyGrabber(position++, rb.getString("Rotate left:"), Context.Key.ROTATE_LEFT);
+        addKeyGrabber(position++, rb.getString("Rotate right:"), Context.Key.ROTATE_RIGHT);
+        addKeyGrabber(position++, rb.getString("Move down:"), Context.Key.MOVE_DOWN);
+        addKeyGrabber(position++, rb.getString("Fall down:"),  Context.Key.FALL_DOWN);
 
         // buttons
         JButton btnClose = new JButton(rb.getString("Close"));
@@ -116,7 +116,6 @@ public class PrefsDlg extends JDialog {
      * @param source event
      */
     private void closeActionPerformed(AWTEvent e) {
-        ctx.savePersistProp();
         dispose();
     }
 
@@ -126,7 +125,7 @@ public class PrefsDlg extends JDialog {
      */
     private void hexSizeActionPerformed(ActionEvent e) {
         Context.HexSize size = btnNormalSize.isSelected() ? Context.HexSize.NORMAL : Context.HexSize.BIG;
-        ctx.put(Context.HEX_SIZE, size.toString());
+        ctx.put(Context.Property.HEX_SIZE, size.toString());
         GamePanel.setHexSize(size);
     }
 
@@ -137,7 +136,7 @@ public class PrefsDlg extends JDialog {
      * @param key name
      * @param value
      */
-    private void addKeyGrabber(int pos, String label, final String keyName, int val) {
+    private void addKeyGrabber(int pos, String label, final Context.Key key) {
         final JDialog _this = this;
         final JTextField jtf = new JTextField();
         JButton button = new JButton(rb.getString("Grab"));
@@ -154,7 +153,7 @@ public class PrefsDlg extends JDialog {
                 GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0),
                 0, 0));
-        jtf.setText(KeyEvent.getKeyText(val));
+        jtf.setText(KeyEvent.getKeyText(Integer.valueOf(ctx.getKeyValue(key))));
         prefsPanel.add(button,
                 new GridBagConstraints(2, pos, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST,
@@ -171,8 +170,7 @@ public class PrefsDlg extends JDialog {
                 int keyId = kg.grab();
                 if (keyId >= 0) {
                     jtf.setText(KeyEvent.getKeyText(keyId));
-                    ctx.put(keyName, new Integer(keyId));
-                    Context.readKeys();
+                    ctx.put(key, new Integer(keyId));
                 }
             }
         });
