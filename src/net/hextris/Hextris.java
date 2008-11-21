@@ -416,11 +416,20 @@ public class Hextris extends JPanel implements Runnable {
 
         HighScore highScore = initHighScore();
         if (highScore.isHighScore(lines)) {
-            String name = JOptionPane.showInputDialog(this, rb.getString("Type in your name:"), rb.getString("High score"), JOptionPane.INFORMATION_MESSAGE);
+            String defValue = ctx.getLastName();
+            String name = (String) JOptionPane.showInputDialog(
+                    this,
+                    rb.getString("Type in your name:"),
+                    rb.getString("High score"),
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    null,
+                    defValue);
             if (name != null && !name.equals("")) {
+                ctx.setProperty(Context.LAST_NAME, name);
                 highScore.addScore(name, lines);
+                highScore.setVisible(true);
             }
-            highScore.setVisible(true);
         }
     }
 

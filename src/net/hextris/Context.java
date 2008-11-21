@@ -22,6 +22,7 @@ public class Context extends Hashtable<Object, Object> {
 
         NORMAL, BIG
     }
+    
     static final long serialVersionUID = 493518487136L;
     static final String cfgFileString = "hextris.cfg";
     static final String KEY_MOVE_LEFT = "key.move.left";
@@ -31,6 +32,7 @@ public class Context extends Hashtable<Object, Object> {
     static final String KEY_ROTATE_LEFT = "key.rotate.left";
     static final String KEY_ROTATE_RIGHT = "key.rotate.right";
     static final String HEX_SIZE = "hex.size";
+    static final String LAST_NAME = "last.name";
     static Context ctx = null;
     static String path = null;
     private static final int[] keys = new int[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_R, KeyEvent.VK_SPACE, KeyEvent.VK_DOWN};
@@ -124,50 +126,7 @@ public class Context extends Hashtable<Object, Object> {
         }
     }
 
-    /**
-     * puts the new property into the hashtable and informs/updates the neccessary classes
-     * @param property
-     * @param value
-     */
-    /*public void setProperty(String property, Object value) {
-    put(property, value);
 
-    if (property.equals(HEX_SIZE)) {
-    //GamePanel.setHexSize(((Integer) value).intValue());
-    //GamePanel.setHexSize((HexSize)value);
-    }
-
-    if (property.equals(KEY_MOVE_LEFT) ||
-    property.equals(KEY_MOVE_RIGHT) ||
-    property.equals(KEY_MOVE_DOWN) ||
-    property.equals(KEY_ROTATE_LEFT) ||
-    property.equals(KEY_ROTATE_RIGHT) ||
-    property.equals(KEY_FALL_DOWN)) {
-    readKeys();
-    }
-    }*/
-    /**
-     * get property from hashtable
-     * if property does not exist then a default value for known properties is returned
-     * @param property property key
-     * @return
-     */
-    public Object getProperty(String property) {
-        if (property == null) {
-            return null;
-        }
-
-        Object o = this.get(property);
-        if (o != null) {
-            return o;
-        } else {
-            if (property.equals(HEX_SIZE)) {
-                return new Integer(4);
-            }
-        }
-
-        return null;
-    }
 
     public HexSize getHexSize() {
         Object val = get(HEX_SIZE);
@@ -179,4 +138,19 @@ public class Context extends Hashtable<Object, Object> {
         }
         return DEFAULT_HEX_SIZE;
     }
+
+    public String getLastName() {
+        Object val = get(LAST_NAME);
+        if (val == null) {
+            return "";
+        }
+        return (String)val;
+    }
+
+    public void setProperty(String property, Object value) {
+        put(property, value);
+        savePersistProp();
+    }
+
+    //TODO:refaktor this class, add enum
 }
