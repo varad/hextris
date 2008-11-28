@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.*;
 
 /**
@@ -32,6 +33,7 @@ public class Hextris extends JPanel implements Runnable {
     private static final int MOVE_DOWN = 1;
     private static final int FALL_DOWN = 2;
     private int action = NONE;
+    private AtomicBoolean paused = new AtomicBoolean(false);
     private Context ctx = Context.getContext();
     private GamePanel playPanel = null;
     private GamePanel previewPanel = null;
@@ -42,6 +44,7 @@ public class Hextris extends JPanel implements Runnable {
     private JComboBox severityCB = null;
     private JComboBox levelCB = null;
     private JButton buttonStart = null;
+    private JButton buttonPause = null;
     private JButton buttonDemo = null;
     private JButton buttonHighscore = null;
     private Thread moverThread;
@@ -70,6 +73,11 @@ public class Hextris extends JPanel implements Runnable {
             } catch (InterruptedException ex) {
                 //System.out.println("interrupted");
             }
+
+            if (paused.get()) {
+                continue;
+            }
+
 
             if (gameOver || this.currentStone == null) {
                 continue;
@@ -178,9 +186,22 @@ public class Hextris extends JPanel implements Runnable {
                 newGame(false, false);
             }
         });
+        this.buttonPause = new JButton(rb.getString("Pause"));
+        this.add(this.buttonPause,
+                new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
+                GridBagConstraints.SOUTHWEST,
+                GridBagConstraints.HORIZONTAL,
+                new Insets(10, 0, 0, 10),
+                0, 0));
+        this.buttonPause.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                pause();
+            }
+        });
         this.buttonDemo = new JButton(rb.getString("Demo"));
         this.add(this.buttonDemo,
-                new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
+                new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 10),
@@ -194,7 +215,7 @@ public class Hextris extends JPanel implements Runnable {
 
         this.buttonHighscore = new JButton(rb.getString("Highscores"));
         this.add(this.buttonHighscore,
-                new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
+                new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 10, 10),
@@ -257,24 +278,7 @@ public class Hextris extends JPanel implements Runnable {
             if (moverThread != null) {
                 moverThread.interrupt();
             }
-        }/* else if (kc == KeyEvent.VK_LEFT) {
-            this.currentStone.moveStone(Stone.MOVE_LEFT);
-            playPanel.repaint();
-        } else if (kc == KeyEvent.VK_RIGHT) {
-            this.currentStone.moveStone(Stone.MOVE_RIGHT);
-            playPanel.repaint();
-        } else if (kc == KeyEvent.VK_UP) {
-            this.currentStone.moveStone(Stone.ROTATE_RIGHT);
-            playPanel.repaint();
-        } else if (kc == KeyEvent.VK_DOWN) {
-            if (this.action == NONE) {
-                this.action = MOVE_DOWN;
-                moverThread.interrupt();
-            }
-        } else if (kc == KeyEvent.VK_SPACE) {
-            this.action = FALL_DOWN;
-            moverThread.interrupt();
-        }*/
+        }
     }
 
     /**
@@ -285,20 +289,20 @@ public class Hextris extends JPanel implements Runnable {
      */
     public void newGame(boolean demo, boolean showOptions) {
         if (demo) {
-            this.severity = 1;
-            this.setLevel(7);
+            severity = 1;
+            setLevel(7);
         } else {
             if (showOptions) {
                 int option = JOptionPane.showOptionDialog(JOptionPane.getFrameForComponent(this),
-                        this.getStartMsg(),
+                        getStartMsg(),
                         rb.getString("New_Game"), JOptionPane.DEFAULT_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null,
                         new String[]{rb.getString("Cancel"), rb.getString("Start")}, rb.getString("Start"));
-                this.grabFocus();
+                grabFocus();
                 if (option != 1) {
                     return;
                 }
-                this.severity = severityCB.getSelectedIndex();
+                severity = severityCB.getSelectedIndex();
                 setLevel(levelCB.getSelectedIndex() + 1);
             } else {
                 // default options
@@ -320,6 +324,7 @@ public class Hextris extends JPanel implements Runnable {
         createNextStone();
         playPanel.repaint();
         gameOver = false;
+        setPaused(false);
         moverThread = new Thread(this);
         moverThread.start();
         this.grabFocus();
@@ -398,6 +403,28 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void fallDown() {
         while (this.moveDown() && !gameOver) {
+        }
+    }
+
+    /**
+     * Pause/resume the game.
+     */
+    public boolean pause() {
+        setPaused(!paused.get());
+        return paused.get();
+    }
+
+    /**
+     * Pause or resume the game.
+     * @param to pause or not
+     */
+    private void setPaused(boolean val) {
+        paused.set(val);
+        if (paused.get()) {
+            buttonPause.setText(rb.getString("Resume"));
+        } else {
+            buttonPause.setText(rb.getString("Pause"));
+            grabFocus();
         }
     }
 
