@@ -474,19 +474,18 @@ public class Hextris extends JPanel implements Runnable {
     private void showHighScore() {
         HighScore hs = initHighScore();
         hs.setVisible(true);
-        final Hextris _this = this;
         hs.addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowDeactivated(WindowEvent e) {
-                _this.grabFocus();
+                grabFocus();
             }
         });
     }
 
     /**
-     * the curren stone is released to the board and thus can not be moved anymore
-     *
+     * The current stone is released to the board
+     * and thus can not bemoved anymore.
      */
     private void releaseCurrentStone() {
         this.currentStone = null;
@@ -507,7 +506,7 @@ public class Hextris extends JPanel implements Runnable {
     }
 
     /**
-     * Increases the stones variable.
+     * Increases a numbers of stones used in the game.
      */
     private void incStones() {
         setStones(++stones);
@@ -516,6 +515,10 @@ public class Hextris extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Sets stones count to the given amount.
+     * @param stones count
+     */
     private void setStones(int s) {
         stones = s;
         stonesLabel.setText(rb.getString("Stones:") + " " + this.stones);
@@ -523,23 +526,31 @@ public class Hextris extends JPanel implements Runnable {
 
     /**
      * Increases the lines variable.
-     * @param l
+     * @param number of lines to be added.
      */
     private void addLines(int l) {
         setLines(lines += l);
     }
 
+    /**
+     * Sets lines count to the given amount.
+     * @param lines count
+     */
     private void setLines(int lines) {
         this.lines = lines;
         linesLabel.setText(rb.getString("Lines:") + " " + this.lines);
     }
 
+    /**
+     * Returns version of this application.
+     * @return version of this application
+     */
     public static String getVersion() {
         return version;
     }
 
     /**
-     * the dialog when game is started containing level and severity selection
+     * The dialog when game is started containing level and severity selection.
      * @return
      */
     private Object[] getStartMsg() {
