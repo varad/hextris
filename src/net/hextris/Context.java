@@ -59,7 +59,7 @@ public class Context extends Hashtable<Context.IProperty, Object> {
      * Creates a new config file with default values.
      * @throws java.io.IOException
      */
-    public Context() throws IOException {
+    private Context() throws IOException {
         try {
             System.getProperty("user.home");
             access = true;
@@ -68,7 +68,6 @@ public class Context extends Hashtable<Context.IProperty, Object> {
         }
 
         if (access) {
-            DIR_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
             File file = Context.getConfigFile();
             if (!file.exists()) {
                 file.createNewFile();
@@ -116,6 +115,7 @@ public class Context extends Hashtable<Context.IProperty, Object> {
     public static Context getContext() {
         if (ctx == null) {
             try {
+                DIR_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
                 FileInputStream istream = new FileInputStream(getConfigFile());
                 ObjectInputStream p = new ObjectInputStream(istream);
                 Object o = p.readObject();

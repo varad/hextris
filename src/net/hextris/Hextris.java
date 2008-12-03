@@ -28,15 +28,14 @@ public class Hextris extends JPanel implements Runnable {
 
     private static final long serialVersionUID = -3267887732569843668L;
     private static ResourceBundle rb = java.util.ResourceBundle.getBundle("net/hextris/language");
-    private static final String version = rb.getString("version");
     private static final int NONE = 0;
     private static final int MOVE_DOWN = 1;
     private static final int FALL_DOWN = 2;
     private int action = NONE;
     private AtomicBoolean paused = new AtomicBoolean(false);
     private Context ctx = Context.getContext();
-    private GamePanel playPanel = null;
-    private GamePanel previewPanel = null;
+    private GamePanel playPanel;
+    private GamePanel previewPanel;
     private JLabel levelLabel = new JLabel("");
     private JLabel stonesLabel = new JLabel("");
     private JLabel linesLabel = new JLabel("");
@@ -71,31 +70,30 @@ public class Hextris extends JPanel implements Runnable {
             try {
                 Thread.sleep(1800 / (level + 1) - 100);
             } catch (InterruptedException ex) {
-                //System.out.println("interrupted");
+                // doesnt matter
             }
 
             if (paused.get()) {
                 continue;
             }
 
-
-            if (gameOver || this.currentStone == null) {
+            if (gameOver || currentStone == null) {
                 continue;
             }
 
-            switch (this.action) {
+            switch (action) {
                 case FALL_DOWN:
-                    this.fallDown();
+                    fallDown();
                     break;
                 case MOVE_DOWN:
                 case NONE:
                     moveDown();
                     break;
                 default:
-                    System.out.println("no action: " + this.action);
+                    System.out.println("no action: " + action);
                     break;
             }
-            this.action = NONE;
+            action = NONE;
         }
     }
 
@@ -104,56 +102,50 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void initialize() {
         try {
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        this.setLayout(new GridBagLayout());
-        if (playPanel == null) {
-            playPanel = new GamePanel(15, 27);
-        }
-        this.add(playPanel,
+        setLayout(new GridBagLayout());
+        playPanel = new GamePanel(15, 27);
+        add(playPanel,
                 new GridBagConstraints(0, 0, 1, 10, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 10),
                 0, 0));
 
-        if (previewPanel == null) {
-            previewPanel = new GamePanel(6, 6);
-        }
-        previewPanel.setBackground(Color.BLACK);
+        previewPanel = new GamePanel(6, 6);
         JLabel nextLabel = new JLabel(rb.getString("Next:"));
-        this.add(nextLabel,
+        add(nextLabel,
                 new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 10),
                 0, 0));
-        this.add(previewPanel,
+        add(previewPanel,
                 new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE,
                 new Insets(0, 0, 0, 10),
                 0, 0));
 
-        this.add(levelLabel,
+        add(levelLabel,
                 new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 10),
                 0, 0));
 
-        this.add(stonesLabel,
+        add(stonesLabel,
                 new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE,
                 new Insets(5, 0, 0, 10),
                 0, 0));
 
-        this.add(linesLabel,
+        add(linesLabel,
                 new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE,
@@ -161,7 +153,7 @@ public class Hextris extends JPanel implements Runnable {
                 0, 0));
 
         //labels appearance
-        Font font = new Font(this.getFont().getName(), this.getFont().getStyle() | Font.BOLD, 12);
+        Font font = new Font(getFont().getName(), getFont().getStyle() | Font.BOLD, 12);
         nextLabel.setFont(font);
         nextLabel.setForeground(Color.WHITE);
         levelLabel.setFont(font);
@@ -172,55 +164,54 @@ public class Hextris extends JPanel implements Runnable {
         linesLabel.setForeground(Color.WHITE);
 
         //buttons
-        this.buttonStart = new JButton(rb.getString("Start"));
-        this.add(this.buttonStart,
+        buttonStart = new JButton(rb.getString("Start"));
+        add(buttonStart,
                 new GridBagConstraints(1, 6, 1, 1, 0.0, 1.0,
                 GridBagConstraints.SOUTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 10),
                 0, 0));
-        this.buttonStart.addActionListener(new ActionListener() {
+        buttonStart.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 newGame(false, false);
             }
         });
-        this.buttonPause = new JButton(rb.getString("Pause"));
-        this.add(this.buttonPause,
+        buttonPause = new JButton(rb.getString("Pause"));
+        add(buttonPause,
                 new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
                 GridBagConstraints.SOUTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 10),
                 0, 0));
-        this.buttonPause.addActionListener(new ActionListener() {
+        buttonPause.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 pause();
             }
         });
-        this.buttonDemo = new JButton(rb.getString("Demo"));
-        this.add(this.buttonDemo,
+        buttonDemo = new JButton(rb.getString("Demo"));
+        add(buttonDemo,
                 new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 10),
                 0, 0));
-        this.buttonDemo.addActionListener(new ActionListener() {
+        buttonDemo.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 newGame(true, true);
             }
         });
 
-        this.buttonHighscore = new JButton(rb.getString("Highscores"));
-        this.add(this.buttonHighscore,
+        buttonHighscore = new JButton(rb.getString("Highscores"));
+        add(buttonHighscore,
                 new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
                 GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 10, 10),
                 0, 0));
-        final Hextris _this = this;
-        this.buttonHighscore.addActionListener(new ActionListener() {
+        buttonHighscore.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 showHighScore();
@@ -228,8 +219,8 @@ public class Hextris extends JPanel implements Runnable {
         });
 
 
-        this.setVisible(true);
-        this.setName("HextrisPane");
+        setVisible(true);
+        setName("HextrisPane");
 
         playPanel.getBoard().drawPlayField();
         gameOver = true;
@@ -251,29 +242,29 @@ public class Hextris extends JPanel implements Runnable {
         if (gameOver || demo) {
             return;
         }
-        if (this.currentStone == null) {
+        if (currentStone == null) {
             return;
         }
 
         if (kc == ctx.getKeyValue(Context.Key.MOVE_LEFT)) {
-            this.currentStone.moveStone(Stone.MOVE_LEFT);
+            currentStone.moveStone(Stone.MOVE_LEFT);
             playPanel.repaint();
         } else if (kc == ctx.getKeyValue(Context.Key.MOVE_RIGHT)) {
-            this.currentStone.moveStone(Stone.MOVE_RIGHT);
+            currentStone.moveStone(Stone.MOVE_RIGHT);
             playPanel.repaint();
         } else if (kc == ctx.getKeyValue(Context.Key.ROTATE_LEFT)) {
-            this.currentStone.moveStone(Stone.ROTATE_LEFT);
+            currentStone.moveStone(Stone.ROTATE_LEFT);
             playPanel.repaint();
         } else if (kc == ctx.getKeyValue(Context.Key.ROTATE_RIGHT)) {
-            this.currentStone.moveStone(Stone.ROTATE_RIGHT);
+            currentStone.moveStone(Stone.ROTATE_RIGHT);
             playPanel.repaint();
         } else if (kc == ctx.getKeyValue(Context.Key.MOVE_DOWN)) {
-            if (this.action == NONE) {
-                this.action = MOVE_DOWN;
+            if (action == NONE) {
+                action = MOVE_DOWN;
                 moverThread.interrupt();
             }
         } else if (kc == ctx.getKeyValue(Context.Key.FALL_DOWN)) {
-            this.action = FALL_DOWN;
+            action = FALL_DOWN;
             if (moverThread != null) {
                 moverThread.interrupt();
             }
@@ -305,7 +296,7 @@ public class Hextris extends JPanel implements Runnable {
                 setLevel(levelCB.getSelectedIndex() + 1);
             } else {
                 // default options
-                this.severity = 1;
+                severity = 1;
                 setLevel(1);
             }
 
@@ -326,7 +317,7 @@ public class Hextris extends JPanel implements Runnable {
         setPaused(false);
         moverThread = new Thread(this);
         moverThread.start();
-        this.grabFocus();
+        grabFocus();
     }
 
     /**
@@ -334,7 +325,7 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void createNextStone() {
         currentStone = new Stone(nextStone, playPanel.getBoard());
-        currentStone.setPosition((this.playPanel.getPanelWidth() - 5) / 2, -1);
+        currentStone.setPosition((playPanel.getPanelWidth() - 5) / 2, -1);
 
         if (currentStone.mayPlace(currentStone.getPosition().x, currentStone.getPosition().y)) {
             nextStone.place(false);
@@ -344,30 +335,30 @@ public class Hextris extends JPanel implements Runnable {
             currentStone.place(true);
             previewPanel.repaint();
             playPanel.repaint();
-            if (this.demo) {
+            if (demo) {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException iex) {
                 }
-                this.currentStone.place(false);
-                int[] bp = this.currentStone.getBestPosition();
-                this.currentStone.place(true);
+                currentStone.place(false);
+                int[] bp = currentStone.getBestPosition();
+                currentStone.place(true);
 
                 for (int i = 0; i < bp[1]; i++) {
-                    this.currentStone.moveStone(Stone.ROTATE_LEFT);
-                    this.playPanel.repaint();
+                    currentStone.moveStone(Stone.ROTATE_LEFT);
+                    playPanel.repaint();
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException iex) {
                     }
                 }
-                this.currentStone.place(false);
-                this.currentStone.setPosition(bp[0], -1);
-                this.currentStone.place(true);
-                int dx = bp[0] - this.currentStone.getPosition().x;
+                currentStone.place(false);
+                currentStone.setPosition(bp[0], -1);
+                currentStone.place(true);
+                int dx = bp[0] - currentStone.getPosition().x;
                 for (int i = 0; Math.abs(dx) > i; i++) {
-                    this.currentStone.moveStone(dx > 0 ? Stone.MOVE_RIGHT : Stone.MOVE_LEFT);
-                    this.playPanel.repaint();
+                    currentStone.moveStone(dx > 0 ? Stone.MOVE_RIGHT : Stone.MOVE_LEFT);
+                    playPanel.repaint();
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException iex) {
@@ -375,7 +366,7 @@ public class Hextris extends JPanel implements Runnable {
                 }
             }
         } else {
-            this.gameOver();
+            gameOver();
         }
     }
 
@@ -387,12 +378,12 @@ public class Hextris extends JPanel implements Runnable {
      */
     private synchronized boolean moveDown() {
         if (currentStone.moveStone(Stone.MOVE_DOWN)) {
-            this.playPanel.repaint();
+            playPanel.repaint();
             return true;
         }
 
-        this.releaseCurrentStone();
-        addLines(this.playPanel.removeFullLines());
+        releaseCurrentStone();
+        addLines(playPanel.removeFullLines());
         createNextStone();
         return false;
     }
@@ -401,7 +392,7 @@ public class Hextris extends JPanel implements Runnable {
      * Moves the stone down, until he hits another stone.
      */
     private void fallDown() {
-        while (this.moveDown() && !gameOver) {
+        while (moveDown() && !gameOver) {
         }
     }
 
@@ -434,9 +425,9 @@ public class Hextris extends JPanel implements Runnable {
      * Stops the moverThread.
      */
     public void gameOver() {
-        this.moverThread = null;
-        this.playPanel.setGameOver(true);
-        this.gameOver = true;
+        moverThread = null;
+        playPanel.setGameOver(true);
+        gameOver = true;
         buttonStart.grabFocus();
 
         HighScore highScore = initHighScore();
@@ -487,7 +478,7 @@ public class Hextris extends JPanel implements Runnable {
      * and thus can not bemoved anymore.
      */
     private void releaseCurrentStone() {
-        this.currentStone = null;
+        currentStone = null;
         incStones();
     }
 
@@ -520,7 +511,7 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void setStones(int s) {
         stones = s;
-        stonesLabel.setText(rb.getString("Stones:") + " " + this.stones);
+        stonesLabel.setText(rb.getString("Stones:") + " " + stones);
     }
 
     /**
@@ -537,7 +528,7 @@ public class Hextris extends JPanel implements Runnable {
      */
     private void setLines(int lines) {
         this.lines = lines;
-        linesLabel.setText(rb.getString("Lines:") + " " + this.lines);
+        linesLabel.setText(rb.getString("Lines:") + " " + lines);
     }
 
     /**
@@ -545,7 +536,7 @@ public class Hextris extends JPanel implements Runnable {
      * @return version of this application
      */
     public static String getVersion() {
-        return version;
+        return rb.getString("version");
     }
 
     /**
@@ -553,7 +544,7 @@ public class Hextris extends JPanel implements Runnable {
      * @return
      */
     private Object[] getStartMsg() {
-        if (this.startMsg == null) {
+        if (startMsg == null) {
             severityCB = new JComboBox();
             severityCB.addItem(rb.getString("Beginner"));
             severityCB.addItem(rb.getString("Medium"));
@@ -563,14 +554,14 @@ public class Hextris extends JPanel implements Runnable {
             for (int i = 1; i <= 10; i++) {
                 levelCB.addItem(new Integer(i));
             }
-            this.startMsg = new Object[]{
+            startMsg = new Object[]{
                         new JLabel(rb.getString("Severity:")),
                         severityCB,
                         new JLabel(rb.getString("Start_level:")),
                         levelCB};
         }
 
-        return this.startMsg;
+        return startMsg;
     }
 
     public static void main(String[] args) {
