@@ -124,7 +124,6 @@ public class Hextris extends JPanel implements Runnable {
         if (previewPanel == null) {
             previewPanel = new GamePanel(6, 6);
         }
-        previewPanel.setLocation(20 + playPanel.pixelWidth, 10);
         previewPanel.setBackground(Color.BLACK);
         JLabel nextLabel = new JLabel(rb.getString("Next:"));
         this.add(nextLabel,

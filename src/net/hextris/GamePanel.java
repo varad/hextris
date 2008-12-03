@@ -23,63 +23,20 @@ public class GamePanel extends JPanel {
 
     private static final long serialVersionUID = -9073308186742942554L;
     private static Context ctx = Context.getContext();
-    static Vector<GamePanel> panels = new Vector<GamePanel>();
-    //static final int removeLineDelay = 100;
-    int panelWidth;
-    int panelHeight;
-    int pixelWidth;
-    int pixelHeight;
-    JLabel gameOverLbl;
+    private static Vector<GamePanel> panels = new Vector<GamePanel>();
+    private int panelWidth;
+    private int panelHeight;
+    private JLabel gameOverLbl;
 
     //some variables for hexagon drawing
-    static int rh = 7;
-    int bh;
-    int hexHeight;
+    private static int rh = 7;
+    private int bh;
+    private int hexHeight;
     //coordinates of hexagon corners
-    int hexWidth;
-    int[] xPoints = new int[7];
-    int[] yPoints = new int[7];
-    /**
-     * color array with colors for stones of some index
-     */
-    /*Color colors[] = {
-    Color.LIGHT_GRAY,
-    new Color(200,0,100),
-    new Color(100,200,0),
-    new Color(0,100,200),
-    new Color(100,100,100),
-    new Color(240,0,0),
-    new Color(0,240,0),
-    new Color(0,0,240),
-    new Color(130,0,0),
-    new Color(0,130,0),
-    new Color(0,0,130),
-    new Color(240,240,0),
-    new Color(240,0,240),
-    new Color(0,240,240),
-    new Color(200,100,0),
-    new Color(0,200,100),
-    new Color(100,0,200)};*/
-    Color colors[] = {
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE,
-        Color.WHITE};
+    private int hexWidth;
+    private int[] xPoints = new int[7];
+    private int[] yPoints = new int[7];
     private Board board;
-    private Color backgroundColor = Color.BLACK;
     private boolean gameOver = false;
 
     /**
@@ -100,8 +57,8 @@ public class GamePanel extends JPanel {
             rh = hexSize;
         }
 
-        this.initComponents();
-        this.initialize();
+        initComponents();
+        initialize();
     }
 
     /**
@@ -133,15 +90,14 @@ public class GamePanel extends JPanel {
         xPoints[5] = cx + rh;
         xPoints[6] = xPoints[0];
 
-        pixelWidth = (panelWidth - 1) * hexWidth - rh;
-        pixelHeight = panelHeight * hexHeight - rh - bh;
-
         //set panelsize
-        Dimension d = new Dimension(pixelWidth + 2 * hexWidth, pixelHeight + hexHeight);
-        this.setPreferredSize(d);
-        this.setMaximumSize(d);
-        this.setMinimumSize(d);
-        this.setSize(d);
+        int width = (panelWidth - 1) * hexWidth - rh + 2 * hexWidth;
+        int height = panelHeight * hexHeight - rh - bh + hexHeight;
+        Dimension dim = new Dimension(width, height);
+        setPreferredSize(dim);
+        setMaximumSize(dim);
+        setMinimumSize(dim);
+        setSize(dim);
     }
 
     /**
@@ -152,7 +108,6 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(this.backgroundColor);
         g.fillRect(0, 0, getWidth(), getHeight());
 
         if (board != null) {
@@ -161,8 +116,6 @@ public class GamePanel extends JPanel {
                 for (int y = 0; y < board.getHeight(); y++) {
                     int colorId = board.field[y][x];
                     if (colorId != 0) {
-                        g.setColor(colors[colorId - 1]);
-
                         int bx = x * hexWidth - hexWidth / 2 - rh;
                         int by = y * hexHeight - bh;
 
@@ -172,15 +125,6 @@ public class GamePanel extends JPanel {
                             xs[i] = xPoints[i] + bx;
                             ys[i] = yPoints[i] + by + lineOffset;
                         }
-
-                        /*g.fillPolygon(xs, ys, 6);
-                        g.setColor(Color.BLACK);
-                        g.drawLine(xs[1], ys[1], xs[0], ys[0]);
-                        g.drawLine(xs[5], ys[5], xs[0], ys[0]);
-                        g.drawLine(xs[1], ys[1], xs[2], ys[2]);
-                        g.drawLine(xs[5], ys[5], xs[4], ys[4]);
-                        g.drawLine(xs[2], ys[2], xs[3], ys[3]);
-                        g.drawLine(xs[4], ys[4], xs[3], ys[3]);*/
 
                         String imgName = ctx.getHexSize() == Context.HexSize.NORMAL
                                 ? "brick.gif" : "brick_big.gif";
@@ -200,23 +144,22 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * removes the full lines in the board and drops the above lines down
+     * Removes the full lines from the board and drops the lines above down.
      * @return
      */
     public int removeFullLines() {
         int lines = 0;
-        for (int y = this.board.getHeight() - 2; y > 0; y--) {
-            if (this.board.lineFull(y)) {
-                this.board.clearLine(y);
-                this.repaint();
-                this.board.removeLine(y);
-                this.repaint();
+        for (int y = board.getHeight() - 2; y > 0; y--) {
+            if (board.lineFull(y)) {
+                board.clearLine(y);
+                repaint();
+                board.removeLine(y);
+                repaint();
                 lines++;
                 y++;
             }
         }
         return lines;
-
     }
 
     /**
@@ -242,16 +185,6 @@ public class GamePanel extends JPanel {
         return size == Context.HexSize.BIG ? 7 : 4;
     }
 
-    /**
-     * sets the background color and repaints
-     */
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-        this.backgroundColor = bg;
-        this.repaint();
-    }
-
     public int getPanelWidth() {
         return this.panelWidth;
     }
@@ -270,7 +203,7 @@ public class GamePanel extends JPanel {
         gameOverLbl.setVerticalAlignment(JLabel.CENTER);
         gameOverLbl.setVisible(false);
 
-        this.setLayout(new GridLayout());
-        this.add(gameOverLbl);
+        setLayout(new GridLayout());
+        add(gameOverLbl);
     }
 }
