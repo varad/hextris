@@ -242,9 +242,6 @@ public class GamePanel extends JPanel {
         return size == Context.HexSize.BIG ? 7 : 4;
     }
 
-    /*---public static int getHexSize() {
-    return rh;
-    }*/
     /**
      * sets the background color and repaints
      */

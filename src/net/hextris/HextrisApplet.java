@@ -21,7 +21,7 @@ public class HextrisApplet extends JApplet {
 	}
 
 	public void init() {
-		Hextris hextris = getHextris();
+		hextris = getHextris();
 		this.setContentPane(hextris);
 		this.setSize(320, 300);
 		this.setLocation(0, 0);
@@ -45,7 +45,7 @@ public class HextrisApplet extends JApplet {
 
 	private Hextris getHextris() {
 		if(hextris == null) {
-			hextris = new Hextris(/*---true*/);
+			hextris = new Hextris();
 			hextris.setFocusable(true);
 			hextris.setRequestFocusEnabled(true);
 		}

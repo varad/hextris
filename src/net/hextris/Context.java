@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 import java.awt.event.KeyEvent;
-import java.util.Map.Entry;
 
 /**
  * An application context where program properties are kept/loaded/saved.
@@ -49,20 +48,31 @@ public class Context extends Hashtable<Context.IProperty, Object> {
         }
     }
     static final long serialVersionUID = 493518487136L;
-    static Context ctx = null;
-    private static final String DIR_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
+    private static Context ctx = null;
+    private static String DIR_PATH;
     private static final String CFG_FILE_NAME = "hextris.cfg";
     private static final HexSize DEFAULT_HEX_SIZE = HexSize.NORMAL;
     private static final String DEFAULT_LAST_NAME = "";
+    private boolean access;
 
     /**
      * Creates a new config file with default values.
      * @throws java.io.IOException
      */
     public Context() throws IOException {
-        File file = Context.getConfigFile();
-        if (!file.exists()) {
-            file.createNewFile();
+        try {
+            System.getProperty("user.home");
+            access = true;
+        } catch (SecurityException ex) {
+            access = false;
+        }
+
+        if (access) {
+            DIR_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".hextris";
+            File file = Context.getConfigFile();
+            if (!file.exists()) {
+                file.createNewFile();
+            }
         }
 
         for (Key key : Key.values()) {
@@ -79,7 +89,9 @@ public class Context extends Hashtable<Context.IProperty, Object> {
             }
         }
 
-        save();
+        if (access) {
+            save();
+        }
     }
 
     /**
@@ -114,11 +126,10 @@ public class Context extends Hashtable<Context.IProperty, Object> {
                 try {
                     ctx = new Context();
                 } catch (IOException ex1) {
-                    System.out.println("cannot creat config file");
+                    System.out.println("cannot create config file");
                 }
             }
         }
-
         return ctx;
     }
 
@@ -126,6 +137,10 @@ public class Context extends Hashtable<Context.IProperty, Object> {
      * Saves properties to the disk.
      */
     private void save() {
+        if (!access) {
+            return;
+        }
+
         try {
             FileOutputStream ostream = new FileOutputStream(getConfigFile());
             ObjectOutputStream p = new ObjectOutputStream(ostream);
@@ -149,6 +164,7 @@ public class Context extends Hashtable<Context.IProperty, Object> {
             if (size != null) {
                 return size;
             }
+
         }
         return DEFAULT_HEX_SIZE;
     }
@@ -162,6 +178,7 @@ public class Context extends Hashtable<Context.IProperty, Object> {
         if (val == null) {
             return "";
         }
+
         return (String) val;
     }
 
@@ -181,7 +198,9 @@ public class Context extends Hashtable<Context.IProperty, Object> {
     @Override
     public synchronized Object put(IProperty property, Object value) {
         Object retVal = super.put(property, value);
-        save();
+        if (access) {
+            save();
+        }
         return retVal;
     }
 }
