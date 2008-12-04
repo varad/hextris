@@ -44,8 +44,6 @@ public class Hextris extends JPanel implements Runnable {
     private JComboBox levelCB = null;
     private JButton buttonStart = null;
     private JButton buttonPause = null;
-    private JButton buttonDemo = null;
-    private JButton buttonHighscore = null;
     private Thread moverThread;
     private Stone currentStone;
     private Stone nextStone;
@@ -55,9 +53,13 @@ public class Hextris extends JPanel implements Runnable {
     private int severity;
     private boolean gameOver;
     private boolean demo = false;
+    private boolean isApplet;
+    public static final boolean APPLET = true;
+    public static final boolean DESKTOP = false;
 
-    public Hextris() {
+    public Hextris(boolean isApplet) {
         super();
+        this.isApplet = isApplet;
         initialize();
     }
 
@@ -190,7 +192,7 @@ public class Hextris extends JPanel implements Runnable {
                 pause();
             }
         });
-        buttonDemo = new JButton(rb.getString("Demo"));
+        JButton buttonDemo = new JButton(rb.getString("Demo"));
         add(buttonDemo,
                 new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0,
                 GridBagConstraints.NORTHWEST,
@@ -204,21 +206,23 @@ public class Hextris extends JPanel implements Runnable {
             }
         });
 
-        buttonHighscore = new JButton(rb.getString("Highscores"));
-        add(buttonHighscore,
-                new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST,
-                GridBagConstraints.HORIZONTAL,
-                new Insets(10, 0, 10, 10),
-                0, 0));
-        buttonHighscore.addActionListener(new ActionListener() {
+        if (!isApplet) {
+            JButton buttonHighscore = new JButton(rb.getString("Highscores"));
+            add(buttonHighscore,
+                    new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.NORTHWEST,
+                    GridBagConstraints.HORIZONTAL,
+                    new Insets(10, 0, 10, 10),
+                    0, 0));
+            buttonHighscore.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                showHighScore();
-            }
-        });
+                public void actionPerformed(ActionEvent e) {
+                    showHighScore();
+                }
+            });
+        }
 
-
+        setBackground(Color.BLACK);
         setVisible(true);
         setName("HextrisPane");
 
@@ -430,21 +434,23 @@ public class Hextris extends JPanel implements Runnable {
         gameOver = true;
         buttonStart.grabFocus();
 
-        HighScore highScore = initHighScore();
-        if (highScore.isHighScore(lines)) {
-            String defValue = ctx.getLastName();
-            String name = (String) JOptionPane.showInputDialog(
-                    this,
-                    rb.getString("Type in your name:"),
-                    rb.getString("High score"),
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    null,
-                    defValue);
-            if (name != null && !name.equals("")) {
-                ctx.put(Context.Property.LAST_NAME, name);
-                highScore.addScore(name, lines);
-                highScore.setVisible(true);
+        if (!isApplet) {
+            HighScore highScore = initHighScore();
+            if (highScore.isHighScore(lines)) {
+                String defValue = ctx.getLastName();
+                String name = (String) JOptionPane.showInputDialog(
+                        this,
+                        rb.getString("Type in your name:"),
+                        rb.getString("High score"),
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        null,
+                        defValue);
+                if (name != null && !name.equals("")) {
+                    ctx.put(Context.Property.LAST_NAME, name);
+                    highScore.addScore(name, lines);
+                    highScore.setVisible(true);
+                }
             }
         }
     }
@@ -565,6 +571,6 @@ public class Hextris extends JPanel implements Runnable {
     }
 
     public static void main(String[] args) {
-        new MainFrame(new Hextris());
+        new MainFrame(new Hextris(DESKTOP));
     }
 } 
