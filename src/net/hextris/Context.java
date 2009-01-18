@@ -121,6 +121,7 @@ public class Context extends Hashtable<Context.IProperty, Object> {
                 Object o = p.readObject();
                 istream.close();
                 ctx = (Context) o;
+                ctx.resetLastName();
             } catch (Exception ex) {
                 System.out.println("could not load context create new one");
                 try {
@@ -180,6 +181,13 @@ public class Context extends Hashtable<Context.IProperty, Object> {
         }
 
         return (String) val;
+    }
+
+    /**
+     * Resets the last name to got into the high score to the default value.
+     */
+    private void resetLastName() {
+        put(Property.LAST_NAME, DEFAULT_LAST_NAME);
     }
 
     /**
