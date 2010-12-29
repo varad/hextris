@@ -28,7 +28,8 @@ import javax.swing.JRadioButton;
  */
 public class PrefsDlg extends JDialog {
 
-    Context ctx = Context.getContext();
+	private static final long serialVersionUID = 1L;
+	Context ctx = Context.getContext();
     JPanel prefsPanel = new JPanel();
     JRadioButton btnNormalSize;
     JRadioButton btnBigSize;
@@ -183,7 +184,9 @@ public class PrefsDlg extends JDialog {
      * @author felfe
      */
     class KeyGrabber extends javax.swing.JDialog {
-        JLabel lbl = new JLabel(rb.getString("Press key"));
+		private static final long serialVersionUID = 1L;
+		
+		JLabel lbl = new JLabel(rb.getString("Press key"));
         int key = -1;
 
         private KeyGrabber() {

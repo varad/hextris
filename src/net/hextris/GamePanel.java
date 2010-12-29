@@ -37,7 +37,6 @@ public class GamePanel extends JPanel {
     private int[] xPoints = new int[7];
     private int[] yPoints = new int[7];
     private Board board;
-    private boolean gameOver = false;
 
     /**
      *
@@ -190,7 +189,6 @@ public class GamePanel extends JPanel {
     }
 
     public void setGameOver(boolean isOver) {
-        this.gameOver = isOver;
         gameOverLbl.setVisible(isOver);
         this.repaint();
     }
